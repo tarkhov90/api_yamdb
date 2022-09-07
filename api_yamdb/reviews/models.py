@@ -2,7 +2,8 @@ from django.db import models
 from .validators import year_validator
 class Category(models.Model):
     name = models.CharField(max_length=256, verbose_name='Категория')
-    slug = models.SlugField(unique=True, verbose_name='Слаг категорий')
+    slug = models.SlugField(unique=True, verbose_name='Слаг категорий',
+                            max_length=50)
 
     class Meta:
         verbose_name = "Категория"
@@ -12,7 +13,7 @@ class Category(models.Model):
         return self.name
 
 class Genre(models.Model):
-    genre = models.CharField(verbose_name='Жанр')
+    genre = models.CharField(verbose_name='Жанр', max_length=50)
     slug = models.SlugField(unique=True, verbose_name='Слаг жанра')
 
     class Meta:
@@ -24,13 +25,15 @@ class Genre(models.Model):
 
 class Title(models.Model):
     category = models.ForeignKey(Category, 
-                                 verbose_name='Категория произведения')
+                                 verbose_name='Категория произведения', 
+                                 on_delete=models.SET_NULL, null=True)
     genre = models.ManyToManyField(Genre, 
                                    verbose_name='Жанр произведения')
-    name = models.CharField(verbose_name='Название произведения')
-    year = models.IntegerField(validators=year_validator,
+    name = models.CharField(verbose_name='Название произведения',
+                            max_length=256)
+    year = models.IntegerField(validators=(year_validator,),
                                verbose_name='Год выпуска произведения')
-    description = models.CharField(verbose_name='Описание')
+    description = models.CharField(verbose_name='Описание', max_length=256)
 
     class Meta:
         verbose_name = "Произведение"
