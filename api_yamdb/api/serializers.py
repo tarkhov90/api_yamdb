@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from reviews.models import Category, Title, Genre
-
+from reviews.models import Category, Genre, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -30,6 +29,7 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = ('id', 'name', 'year', 'description',
                   'genre', 'category')
+
 
 class ReadTitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
