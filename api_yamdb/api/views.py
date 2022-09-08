@@ -43,8 +43,7 @@ class GenreViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
 class TitleViewSet(viewsets.ModelViewSet):
-    # queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     serializer_class = TitleSerializer
 
     def get_serializer_class(self):
