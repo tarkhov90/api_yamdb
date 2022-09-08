@@ -61,7 +61,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     serializer_class = TitleSerializer
     filterset_class = TitleFilter
-    permission_classes = (IsAdmin, ReadOnly,)
+    # permission_classes = (IsAdmin, ReadOnly,)
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return TitleSerializer
@@ -70,7 +70,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 @permission_classes((AuthorModeratorAdminPermission, ReadOnly,))
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    permission_classes = (AuthorModeratorAdminPermission, ReadOnly,)
+    # permission_classes = (AuthorModeratorAdminPermission, ReadOnly,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
