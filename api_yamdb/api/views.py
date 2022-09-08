@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from api.filters import TitleFilter
-from .permissions import IsOwnerOrReadOnly, AuthorModeratorAdminPermission
+from .permissions import AuthorModeratorAdminPermission
 
 
 from api.serializers import (CategorySerializer, GenreSerializer,
