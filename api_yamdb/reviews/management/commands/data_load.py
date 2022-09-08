@@ -3,7 +3,7 @@ from django.conf import settings
 import csv
 from csv import DictReader
 import os
-from reviews.models import Review, Comment
+from reviews.models import Review, Comment, User
 
 
 # class Command(BaseCommand):
@@ -24,20 +24,23 @@ ALREDY_LOADED_ERROR_MESSAGE = """
 class Command(BaseCommand):
     # Show this when the user types help
     help = "Загрузка данных из файла review.csv"
-
+    
     def handle(self, *args, **options):
         # Текст, если данные уже существуют в БД
+     
         if Review.objects.exists():
             print('дочерние данные уже загружены...существуют.')
             print(ALREDY_LOADED_ERROR_MESSAGE)
             return
         
         # Текст перед загрузкой данных в БД
+        #id=Review.objects.get(id=row['review_id']), 
         print("Загрузка данных ")
 
         #Код для загрузки данных в БД
+        #review_id = Review.objects.get(id=row[review_id])
         for row in DictReader(open(f"{settings.BASE_DIR}/static/data/{'review.csv'}", encoding='utf-8')):
-            review = Review(text=row['text'], pub_date=row['pub_date'], author=row['author'],
+            review = Review(text=row['text'], pub_date=row['pub_date'], author=User.objects.get(id=row['author']),
                             score=row['score'])
             review.save()
 
