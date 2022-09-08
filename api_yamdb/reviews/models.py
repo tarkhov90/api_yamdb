@@ -4,8 +4,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from .validators import year_validator
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
+from users.models import User
 
-User = get_user_model()
 class Category(models.Model):
     name = models.CharField(max_length=256, verbose_name='Категория')
     slug = models.SlugField(unique=True, verbose_name='Слаг категорий',

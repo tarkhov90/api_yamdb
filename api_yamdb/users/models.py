@@ -3,12 +3,13 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 
 
-class User(AbstractUser):
-    ROLES = (
+ROLES = (
         ('user', 'User'),
         ('moderator', 'Moderator'),
         ('admin', 'Admin'),
     )
+    
+class User(AbstractUser):
     username = models.CharField(
         max_length=150,
         unique=True,
