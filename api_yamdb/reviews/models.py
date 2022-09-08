@@ -17,7 +17,7 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    genre = models.CharField(verbose_name='Жанр', max_length=50)
+    name = models.CharField(verbose_name='Жанр', max_length=50)
     slug = models.SlugField(unique=True, verbose_name='Слаг жанра')
 
     class Meta:
@@ -46,3 +46,10 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
+    title = models.ForeignKey('Title', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.title} {self.genre}'
