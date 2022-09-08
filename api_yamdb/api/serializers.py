@@ -6,14 +6,14 @@ from django.shortcuts import get_object_or_404
 class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
-        exclude = 'id'
+        exclude = ('id',)
         model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
-        exclude = 'id'
+        exclude = ('id',)
         model = Genre
 
 
