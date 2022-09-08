@@ -1,8 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+<<<<<<< HEAD
 
 from .validators import year_validator
+=======
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
+
+>>>>>>> 6434cef6116010490d83dcc8f5fb5355338041ca
 
 User = get_user_model()
 class Category(models.Model):
@@ -28,7 +34,6 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class Title(models.Model):
     category = models.ForeignKey(Category,

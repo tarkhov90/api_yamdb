@@ -6,7 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from api.filters import TitleFilter
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, AuthorModeratorAdminPermission
+
 
 from api.serializers import (CategorySerializer, GenreSerializer,
                              ReadTitleSerializer, TitleSerializer, CommentSerializer, ReviewsSerializer)
@@ -60,7 +61,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [AuthorModeratorAdminPermission]
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -73,7 +74,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [AuthorModeratorAdminPermission]
 
     def get_queryset(self):
         review = get_object_or_404(Comment, pk=self.kwargs.get('review_id'))
