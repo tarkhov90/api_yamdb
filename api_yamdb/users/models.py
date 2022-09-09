@@ -4,10 +4,11 @@ from django.core.validators import RegexValidator
 
 
 ROLES = (
-        ('user', 'User'),
-        ('moderator', 'Moderator'),
-        ('admin', 'Admin'),
-    )
+    ('user', 'User'),
+    ('moderator', 'Moderator'),
+    ('admin', 'Admin'),
+)
+
 
 class User(AbstractUser):
     username = models.CharField(
@@ -63,5 +64,3 @@ class User(AbstractUser):
     @property
     def is_user(self):
         return self.role == 'user'
-
- 

@@ -2,7 +2,9 @@ from rest_framework import serializers
 from reviews.models import Category, Genre, Title
 from reviews.models import Review, Comment, Title
 from django.shortcuts import get_object_or_404
+
 from users.models import User
+
 
 class CategorySerializer(serializers.ModelSerializer):
 
@@ -47,7 +49,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
-    
+
     def validate(self, data):
         request = self.context['request']
         author = request.user
@@ -107,6 +109,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
                 'Имя пользователя "me" не разрешено.'
             )
         return value
+
 
 class SignupSerializer(serializers.ModelSerializer):
 

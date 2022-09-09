@@ -4,19 +4,23 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, permission_classes, api_view
 from rest_framework.response import Response
-from api.filters import TitleFilter
+
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
-from api_yamdb.settings import ADMIN_EMAIL
-from .permissions import (IsAuthorOrReadOnly, IsAdminUserOrReadOnly, IsAdmin, IsModerator,
-                          ReadOnly, AdminModeratorAuthorPermission)
-from users.permissions import IsAuthorOrStaffOrReadOnly
 
+from api_yamdb.settings import ADMIN_EMAIL
+from .permissions import (IsAdminUserOrReadOnly, IsAdmin,
+                          AdminModeratorAuthorPermission)
 from api.serializers import (CategorySerializer, GenreSerializer,
-                             ReadTitleSerializer, TitleSerializer, CommentSerializer, ReviewsSerializer, AdminUserSerializer, UserSerializer, SignupSerializer, TokenSerializer)
-from reviews.models import Category, Genre, Title, Review, Comment, Title
+                             ReadTitleSerializer, TitleSerializer,
+                             CommentSerializer, ReviewsSerializer,
+                             AdminUserSerializer, UserSerializer,
+                             SignupSerializer, TokenSerializer)
+from reviews.models import Category, Genre, Title, Review, Title
 from users.models import User
+from api.filters import TitleFilter
+
 
 # @permission_classes((IsAdmin,ReadOnly,))
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -32,7 +36,6 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         url_path=r'(?P<slug>\w+)',
         lookup_field='slug', url_name='category_slug'
     )
-
     def get_category(self, request, slug):
         category = self.get_object()
         serializer = CategorySerializer(category)
@@ -57,7 +60,6 @@ class GenreViewSet(viewsets.ModelViewSet):
         serializer = CategorySerializer(category)
         category.delete()
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
-
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -96,11 +98,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
         serializer.save(author=self.request.user, review=review)
+
+
 @permission_classes((IsAdmin,))
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = AdminUserSerializer
-    # permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     lookup_field = 'username'
     lookup_value_regex = r'[\w\@\.\+\-]+'

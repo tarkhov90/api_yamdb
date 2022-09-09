@@ -1,10 +1,9 @@
-from django.contrib.auth import get_user_model
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-from .validators import year_validator
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 from users.models import User
+from .validators import year_validator
+
 
 class Category(models.Model):
     name = models.CharField(max_length=256, verbose_name='Категория')
@@ -30,6 +29,7 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
+
 class Title(models.Model):
     category = models.ForeignKey(Category,
                                  verbose_name='Категория произведения',
@@ -49,9 +49,11 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
+
 class GenreTitle(models.Model):
     genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
     title = models.ForeignKey('Title', on_delete=models.CASCADE)
+
 
 class Review(models.Model):
     """Модель отзывов"""
@@ -60,12 +62,12 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     score = models.IntegerField(
-            'оценка',
-            validators=(
-                MinValueValidator(1),
-                MaxValueValidator(10)
-            ),
-            error_messages={'validators': 'Оценка от 1 до 10!'}
+        'оценка',
+        validators=(
+            MinValueValidator(1),
+            MaxValueValidator(10)
+        ),
+        error_messages={'validators': 'Оценка от 1 до 10!'}
     )
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE,
@@ -81,7 +83,7 @@ class Review(models.Model):
                 name='unique review'
             )]
         ordering = ('pub_date',)
-        
+
     def __str__(self):
         return self.text
 
