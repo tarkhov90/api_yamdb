@@ -29,6 +29,9 @@ class User(AbstractUser):
         max_length=254,
         unique=True,
     )
+    confirmation_code = models.CharField(
+        max_length=50
+    )
     first_name = models.CharField(
         max_length=150,
         blank=True,
