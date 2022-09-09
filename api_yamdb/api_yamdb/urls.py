@@ -1,13 +1,10 @@
-from django.urls import path, include
 from django.contrib import admin
+from django.urls import include, path
 from django.views.generic import TemplateView
 
 
-api_patterns = [
-    path('', include('users.urls')),
-]
-
 urlpatterns = [
+    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path(
         'redoc/',
