@@ -3,7 +3,8 @@ from django.conf import settings
 import csv
 from csv import DictReader
 import os
-from reviews.models import Review, Comment, User
+from reviews.models import Review, Comment
+from users.models import User
 
 
 # class Command(BaseCommand):

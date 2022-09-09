@@ -16,13 +16,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
-    'reviews',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
+    'api',
+    'reviews',
     'users',
-
 ]
 
 MIDDLEWARE = [
@@ -113,3 +112,5 @@ SIMPLE_JWT = {
 }
 
 ADMIN_EMAIL = 'Admin@ya.ru'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

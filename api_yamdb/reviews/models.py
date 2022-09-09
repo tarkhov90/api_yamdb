@@ -60,15 +60,28 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     score = models.IntegerField(
-        validators=[
-            MinValueValidator(1, 'Минимальный рейтинг 1'),
-            MaxValueValidator(10, 'Максимальный рейтинг 10')]
+            'оценка',
+            validators=(
+                MinValueValidator(1),
+                MaxValueValidator(10)
+            ),
+            error_messages={'validators': 'Оценка от 1 до 10!'}
     )
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE,
-        related_name="reviews", null=True
+        related_name='reviews'
     )
 
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
+        constraints = [
+            models.UniqueConstraint(
+                fields=('title', 'author', ),
+                name='unique review'
+            )]
+        ordering = ('pub_date',)
+        
     def __str__(self):
         return self.text
 
@@ -82,3 +95,6 @@ class Comment(models.Model):
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return self.text

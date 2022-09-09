@@ -9,8 +9,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 from api_yamdb.settings import ADMIN_EMAIL
-from .permissions import (IsAuthorOrReadOnly, IsAdmin, IsModerator,
-                          ReadOnly)
+from .permissions import (IsAuthorOrReadOnly, IsAdminUserOrReadOnly, IsAdmin, IsModerator,
+                          ReadOnly, AdminModeratorAuthorPermission)
+from users.permissions import IsAuthorOrStaffOrReadOnly
 
 from api.serializers import (CategorySerializer, GenreSerializer,
                              ReadTitleSerializer, TitleSerializer, CommentSerializer, ReviewsSerializer, AdminUserSerializer, UserSerializer, SignupSerializer, TokenSerializer)
@@ -21,6 +22,7 @@ from users.models import User
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     # permission_classes = (IsAdmin | ReadOnly,)
@@ -37,12 +39,13 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         category.delete()
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
-# @permission_classes((IsAdmin, ReadOnly))
+
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    permission_classes = (IsAdminUserOrReadOnly,)
 
     @action(
         detail=False, methods=['delete'],
@@ -56,41 +59,42 @@ class GenreViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
 
-# @permission_classes((IsAdmin, IsAuthorOrReadOnly))
+
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     serializer_class = TitleSerializer
     filterset_class = TitleFilter
-    # permission_classes = (IsAdmin, ReadOnly,)
+    permission_classes = (IsAdminUserOrReadOnly,)
+
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return TitleSerializer
         return ReadTitleSerializer
 
-# @permission_classes((IsAdmin, IsModerator, ReadOnly,))
+
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    # permission_classes = (AuthorModeratorAdminPermission, ReadOnly,)
+    permission_classes = (AdminModeratorAuthorPermission,)
 
     def get_queryset(self):
-        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         return title.reviews.all()
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, title=title)
 
-# @permission_classes((IsAdmin, IsModerator, ReadOnly,))
+
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    # permission_classes = [AuthorModeratorAdminPermission, ReadOnly]
+    permission_classes = (AdminModeratorAuthorPermission,)
 
     def get_queryset(self):
-        review = get_object_or_404(Comment, pk=self.kwargs.get('review_id'))
+        review = get_object_or_404(Comment, id=self.kwargs.get('review_id'))
         return review.comments.all()
 
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, pk=self.kwargs.get('title_id'))
+        review = get_object_or_404(Review, id=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, review=review)   
 
 @permission_classes((IsAdmin,))
