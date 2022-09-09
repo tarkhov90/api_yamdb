@@ -25,7 +25,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    # permission_classes = (IsAdmin | ReadOnly,)
+    permission_classes = (IsAdminUserOrReadOnly,)
 
     @action(
         detail=False, methods=['delete'],
@@ -90,13 +90,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminModeratorAuthorPermission,)
 
     def get_queryset(self):
-        review = get_object_or_404(Comment, id=self.kwargs.get('review_id'))
+        review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
         return review.comments.all()
 
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, id=self.kwargs.get('title_id'))
-        serializer.save(author=self.request.user, review=review)   
-
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        serializer.save(author=self.request.user, review=review)
 @permission_classes((IsAdmin,))
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
