@@ -9,15 +9,15 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 from api_yamdb.settings import ADMIN_EMAIL
-from .permissions import AuthorModeratorAdminPermission, IsAdmin, ReadOnly
-
+from .permissions import (IsAuthorOrReadOnly, IsAdmin, IsModerator,
+                          ReadOnly)
 
 from api.serializers import (CategorySerializer, GenreSerializer,
                              ReadTitleSerializer, TitleSerializer, CommentSerializer, ReviewsSerializer, AdminUserSerializer, UserSerializer, SignupSerializer, TokenSerializer)
 from reviews.models import Category, Genre, Title, Review, Comment, Title
 from users.models import User
 
-@permission_classes((IsAdmin,ReadOnly,))
+# @permission_classes((IsAdmin,ReadOnly,))
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -37,7 +37,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         category.delete()
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
-@permission_classes((IsAdmin, ReadOnly,))
+# @permission_classes((IsAdmin, ReadOnly))
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -56,21 +56,21 @@ class GenreViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
 
-@permission_classes((IsAdmin, ReadOnly,))
+# @permission_classes((IsAdmin, IsAuthorOrReadOnly))
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     serializer_class = TitleSerializer
     filterset_class = TitleFilter
-    permission_classes = (IsAdmin, ReadOnly,)
+    # permission_classes = (IsAdmin, ReadOnly,)
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return TitleSerializer
         return ReadTitleSerializer
 
-@permission_classes((AuthorModeratorAdminPermission, ReadOnly,))
+# @permission_classes((IsAdmin, IsModerator, ReadOnly,))
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    permission_classes = (AuthorModeratorAdminPermission, ReadOnly,)
+    # permission_classes = (AuthorModeratorAdminPermission, ReadOnly,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -80,7 +80,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, title=title)
 
-@permission_classes((AuthorModeratorAdminPermission, ReadOnly,))
+# @permission_classes((IsAdmin, IsModerator, ReadOnly,))
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     # permission_classes = [AuthorModeratorAdminPermission, ReadOnly]

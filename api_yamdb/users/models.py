@@ -8,7 +8,7 @@ ROLES = (
         ('moderator', 'Moderator'),
         ('admin', 'Admin'),
     )
-    
+
 class User(AbstractUser):
     username = models.CharField(
         max_length=150,
@@ -56,3 +56,7 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == 'moderator'
+
+    @property
+    def is_user(self):
+        return self.role == 'user'
