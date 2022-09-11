@@ -1,28 +1,26 @@
-from django.db.models import Avg
-from rest_framework import filters, viewsets, status
-from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import action, permission_classes, api_view
-from rest_framework.response import Response
-
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from reviews.models import Category, Genre, Review, Title
 
-from api_yamdb.settings import ADMIN_EMAIL
-from .permissions import (IsAdminUserOrReadOnly, IsAdmin,
-                          AdminModeratorAuthorPermission)
-from api.serializers import (CategorySerializer, GenreSerializer,
-                             ReadTitleSerializer, TitleSerializer,
-                             CommentSerializer, ReviewsSerializer,
-                             AdminUserSerializer, UserSerializer,
-                             SignupSerializer, TokenSerializer)
-from reviews.models import Category, Genre, Title, Review, Title
-from users.models import User
 from api.filters import TitleFilter
+from api.serializers import (AdminUserSerializer, CategorySerializer,
+                             CommentSerializer, GenreSerializer,
+                             ReadTitleSerializer, ReviewsSerializer,
+                             SignupSerializer, TitleSerializer,
+                             TokenSerializer, UserSerializer)
+from api_yamdb.settings import ADMIN_EMAIL
+from users.models import User
+from .permissions import (AdminModeratorAuthorPermission, IsAdmin,
+                          IsAdminUserOrReadOnly)
 
 
-# @permission_classes((IsAdmin,ReadOnly,))
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -92,7 +90,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminModeratorAuthorPermission,)
 
     def get_queryset(self):
-        review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
+        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
         return review.comments.all()
 
     def perform_create(self, serializer):

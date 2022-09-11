@@ -1,8 +1,8 @@
-from rest_framework import serializers
-from reviews.models import Category, Genre, Title
-from reviews.models import Review, Comment, Title
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
@@ -77,7 +77,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(required=True)
+    username = serializers.CharField(
+        required=True, 
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
     email = serializers.CharField(required=True)
     role = serializers.StringRelatedField(read_only=True)
 

@@ -1,8 +1,8 @@
 import random
+
 from rest_framework import serializers
 
 from .models import User
-
 
 CONFIRM_CODE_MIN = 000000
 CONFIRM_CODE_MAX = 999999
