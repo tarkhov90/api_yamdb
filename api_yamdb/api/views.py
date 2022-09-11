@@ -1,3 +1,9 @@
+from api.filters import TitleFilter
+from api.serializers import (AdminUserSerializer, CategorySerializer,
+                             CommentSerializer, GenreSerializer,
+                             ReadTitleSerializer, ReviewsSerializer,
+                             SignupSerializer, TitleSerializer,
+                             TokenSerializer, UserSerializer)
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Avg
@@ -8,15 +14,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title
-
-from api.filters import TitleFilter
-from api.serializers import (AdminUserSerializer, CategorySerializer,
-                             CommentSerializer, GenreSerializer,
-                             ReadTitleSerializer, ReviewsSerializer,
-                             SignupSerializer, TitleSerializer,
-                             TokenSerializer, UserSerializer)
-from api_yamdb.settings import ADMIN_EMAIL
 from users.models import User
+
+from api_yamdb.settings import ADMIN_EMAIL
+
 from .permissions import (AdminModeratorAuthorPermission, IsAdmin,
                           IsAdminUserOrReadOnly)
 
@@ -94,7 +95,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         return review.comments.all()
 
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        review = get_object_or_404(
+            Review, id=self.kwargs.get('review_id'),
+            title=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, review=review)
 
 
