@@ -45,7 +45,7 @@ class Command(BaseCommand):
                             score=row['score'])
             review.save()
 
-        # for row in DictReader(open(f"{settings.BASE_DIR}/static/data/{'comments.csv'}", encoding='utf-8')):
-        #     comment = Comment(text=row['text'], pub_date=row['pub_date'], author=row['author'],
-        #                         review_id=row['review_id'])
-        #     comment.save()
+        for row in DictReader(open(f"{settings.BASE_DIR}/static/data/{'comments.csv'}", encoding='utf-8')):
+            comment = Comment(text=row['text'], pub_date=row['pub_date'], author=row['author'],
+                                id=Review.objects.get(id=row['review_id']))
+            comment.save()
