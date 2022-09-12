@@ -65,7 +65,7 @@ python manage.py migrate
 
 ```
 python manage.py runserver
-
+```
 
 ## Авторы
 - :white_check_mark: [Александр Фомичев](https://github.com/Fan160688)
