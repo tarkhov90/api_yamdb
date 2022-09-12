@@ -51,8 +51,10 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    genre = models.ForeignKey('Genre', on_delete=models.SET_NULL)
-    title = models.ForeignKey('Title', on_delete=models.SET_NULL)
+    genre = models.ForeignKey('Genre', on_delete=models.SET_NULL,
+                              blank=True, null=True)
+    title = models.ForeignKey('Title', on_delete=models.SET_NULL,
+                              blank=True, null=True)
 
 
 class Review(models.Model):
