@@ -21,7 +21,7 @@ v1_router_users.register(
 
 v1_patterns = [
     path('auth/', include(v1_router_auth.urls)),
-    path('', include(v1_router_users.urls)),
+    path('', include(v1_router_auth.urls)),
 ]
 
 urlpatterns = [
